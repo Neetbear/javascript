@@ -2,12 +2,13 @@ const canvas = document.getElementById("myCanvas");
 const context = canvas.getContext("2d");
 
 const arcRadius = 20;
-let arcPosX = canvas.width / 2 + 100;
-let arcPosY = canvas.height / 2;
+let arcPosX = canvas.width / 2;
+let arcPosY = canvas.height / 2 + 30;
 
+const startDir = [-1, 1];
 let X = 1; 
 let Y = 1;
-let S = 7;
+let S = 3;
 
 let ball = {
     left: 0, right: 0, top: 0, bottom: 0
@@ -22,12 +23,12 @@ let brick = {
 // 실수로 시작부터 column열 row행 반대로 시작함
 let brickColumn = 5, brickRow = 4;
 // let brickColumn, brickRow;
-// function setBricks() {
-//     brickColumn = document.getElementById("columnNumber").value;
-//     brickRow = document.getElementById("rowNumber").value;
-//     console.log(brickColumn, brickRow);
-// }
-// setBricks();
+function startBricks() {
+    brickColumn = document.getElementById("columnNumber").value;
+    brickRow = document.getElementById("rowNumber").value;
+    console.log(brickColumn, brickRow);
+}
+
 const brickWidth = 50;
 const brickHeight = 25;
 let bricks = []; // 2차원 배열로 생성할 것임
@@ -101,7 +102,10 @@ let pauseX = -1;
 function keyDownEventHandler(e) {
     if(e.keyCode == 32) {
         if(gameStatus == 0) {
-            alert("Game Start");
+            // alert("Game Start");
+            startBricks();
+            X = startDir[Math.round(Math.random())];
+            Y = startDir[Math.round(Math.random())];
             gameStatus = 1;
         } else if(gameStatus == 2) {
             window.location.reload();
@@ -147,7 +151,7 @@ function updata() {
         } 
     } else {
         arcPosY -= S;
-        if( arcPosY < arcRadius ) {
+        if( arcPosY <= arcRadius ) {
             Y = 1;
         }
     }
@@ -171,13 +175,14 @@ function isCollsionRectToArc() {
         && arcPosY + arcRadius >= canvas.height - 20) {
             // console.log("충돌");
             Y = -1;
-    } else {
+    } 
+    // else {
         // console.log("miss");
-    }
+    // }
 } 
 
 function gameOver() {
-    if(arcPosY + arcRadius == canvas.height ) {
+    if(arcPosY + arcRadius >= canvas.height) {
         alert("Game Over");
         gameStatus = 2;
     }
