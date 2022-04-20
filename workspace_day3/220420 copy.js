@@ -1,3 +1,63 @@
+/*
+    배열 Array
+*/
+
+// //자바스크립트 배열 선언 방법
+// let testArray = [1, 2, 3, 4, 5];
+// let testArray2 = new Array(5);
+
+// // 배열 각 요소에 접근 방법
+// testArray[0] =100;
+
+// // 배열은 주로 반복문이랑 같이 사용
+// for(let i = 0; i < testArray.length; i++) {
+//     testArray[i];
+// } // i가 필요할 때 특정 index값만 사용하게 할때 특히 유용
+
+// testArray.forEach(function(number, index, arr) {
+//     console.log("number : ", number, " index : ", index, " arr : ",arr);
+// }) // 첨부터 끝까지 순차적으로 돌릴때 
+
+// 자바스크립트의 배열의 특징은 배열의 각 요소의 타입이 달라도 상관없다 (배열을 요소로 받을수도 있다)
+// let testArray = [1, 'ball', X, [10, 20, 30], 5];
+
+// // push 배열에 새 요소 추가 배열의 맨뒤에 들어간다
+// testArray.push(30);
+// testArray.forEach(function(number, index, arr) {
+//     console.log("2 number : ", number, " index : ", index, " arr : ",arr);
+// })
+
+// // pop 맨뒤의 요소 제거
+// testArray.pop();
+// testArray.forEach(function(number, index, arr) {
+//     console.log("3 number : ", number, "2 index : ", index, "2 arr : ",arr);
+// })
+
+// //unshift 맨 앞에 요소 추가
+// testArray.unshift(300);
+// testArray.forEach(function(number, index, arr) {
+//     console.log("4 number : ", number, "2 index : ", index, "2 arr : ",arr);
+// })
+
+// //shift 맨 앞의 요소 제거
+// testArray.shift();
+// testArray.forEach(function(number, index, arr) {
+//     console.log("5 number : ", number, "2 index : ", index, "2 arr : ",arr);
+// })
+
+// 사실 앞쪽의 데이터를 건드리는건 추천되는 사용함수는 아니다 -> 속도가 느려진다
+// 앞쪽을 건드리려면 힙이 아닌 스택의 느낌이라 전체를 복사한 다음에 앞쪽에 하나 추가하고 차례차례 스택을 쌓아 주는 느낌이다 
+
+// map 모든 인자들을 건드려 줄때 사용 
+// 반복문 돌려서 모든 인자들을 콜백함수에 넣어서 돌려주는 느낌
+// return값을 새로운 배열에 담아줘야한다 => foreach와 차이점
+// let arrayMultiple = testArray.map( x => x * 2);
+// arrayMultiple.forEach(function(number, index, arr) {
+//     console.log("6 number : ", number, "2 index : ", index, "2 arr : ",arr);
+// })
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const canvas = document.getElementById("myCanvas");
 const context = canvas.getContext("2d");
 
@@ -20,14 +80,12 @@ let brick = {
 }
 
 // 실수로 시작부터 column열 row행 반대로 시작함
-let brickColumn = 5, brickRow = 4;
-// let brickColumn, brickRow;
-// function setBricks() {
-//     brickColumn = document.getElementById("columnNumber").value;
-//     brickRow = document.getElementById("rowNumber").value;
-//     console.log(brickColumn, brickRow);
-// }
-// setBricks();
+let brickColumn, brickRow;
+function gamestart() {
+    brickColumn = document.getElementById("columnNumber").value;
+    brickRow = document.getElementById("rowNumber").value;
+    console.log(brickColumn, brickRow);
+}
 const brickWidth = 50;
 const brickHeight = 25;
 let bricks = []; // 2차원 배열로 생성할 것임
@@ -96,19 +154,8 @@ document.addEventListener('keyup', keyUpEventHandler);
 let rectPosX = canvas.width / 2 - 100 / 2;
 let rectS = 15;
 
-let gameStatus = 0; // 0 시작전 1 시작 2 끝
-let pauseX = -1;
 function keyDownEventHandler(e) {
-    if(e.keyCode == 32) {
-        if(gameStatus == 0) {
-            alert("Game Start");
-            gameStatus = 1;
-        } else if(gameStatus == 2) {
-            window.location.reload();
-        } else {
-            pauseX = pauseX * (-1);
-        }
-    } else if(e.key == "ArrowRight") {
+    if(e.key == "ArrowRight") {
         if(rectPosX <= canvas.width -100) {
             rectPosX += rectS;
         } else if(rectPosX = canvas.width -100) {
@@ -120,11 +167,16 @@ function keyDownEventHandler(e) {
         } else if(rectPosX = 0) {
             rectPosX += 1;
         } 
-    } 
+    } else if(e.keyCode == 32) {
+        alert("Game Start");
+        location.reload();
+    }
 }
 function keyUpEventHandler(e) {
     if(e.key == "ArrowRight") {
+
     } else if(e.key == "ArrowLeft") {
+        
     }
 }
 
@@ -154,13 +206,12 @@ function updata() {
     // 충돌하기 
     isCollsionRectToArc();
     // 게임오버
-    gameOver();
+    // gameOver();
     // 벽돌깨기
     isCollsionArcToBricks();
     // // 게임클리어
     if(gameClear() >= 1) {
         alert("Game Clear!!!");
-        gameStatus = 2;
     }
 }
 
@@ -179,7 +230,7 @@ function isCollsionRectToArc() {
 function gameOver() {
     if(arcPosY + arcRadius == canvas.height ) {
         alert("Game Over");
-        gameStatus = 2;
+        location.reload(true);
     }
 }
 
@@ -224,4 +275,12 @@ function drawArc() {
 }
 
 setInterval(draw, 10);
-setInterval(() => {if(gameStatus == 1 && pauseX == 1) {updata()}}, 10);
+setInterval(updata, 10);
+
+// if(gameClear() < 1 && gameClear() >= 0) {
+//     setInterval(draw, 10);
+//     setInterval(updata, 10);
+// }else if (gameClear() >= 1 || gameClear() < 0) {
+//     alert("Game Clear!!!");
+//     location.reload(true);
+// }

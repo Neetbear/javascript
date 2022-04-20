@@ -1,3 +1,4 @@
+
 const canvas = document.getElementById("myCanvas");
 const context = canvas.getContext("2d");
 
@@ -20,14 +21,12 @@ let brick = {
 }
 
 // 실수로 시작부터 column열 row행 반대로 시작함
-let brickColumn = 5, brickRow = 4;
-// let brickColumn, brickRow;
-// function setBricks() {
-//     brickColumn = document.getElementById("columnNumber").value;
-//     brickRow = document.getElementById("rowNumber").value;
-//     console.log(brickColumn, brickRow);
-// }
-// setBricks();
+let brickColumn, brickRow;
+function gamestart() {
+    brickColumn = document.getElementById("columnNumber").value;
+    brickRow = document.getElementById("rowNumber").value;
+    console.log(brickColumn, brickRow);
+}
 const brickWidth = 50;
 const brickHeight = 25;
 let bricks = []; // 2차원 배열로 생성할 것임
@@ -96,19 +95,8 @@ document.addEventListener('keyup', keyUpEventHandler);
 let rectPosX = canvas.width / 2 - 100 / 2;
 let rectS = 15;
 
-let gameStatus = 0; // 0 시작전 1 시작 2 끝
-let pauseX = -1;
 function keyDownEventHandler(e) {
-    if(e.keyCode == 32) {
-        if(gameStatus == 0) {
-            alert("Game Start");
-            gameStatus = 1;
-        } else if(gameStatus == 2) {
-            window.location.reload();
-        } else {
-            pauseX = pauseX * (-1);
-        }
-    } else if(e.key == "ArrowRight") {
+    if(e.key == "ArrowRight") {
         if(rectPosX <= canvas.width -100) {
             rectPosX += rectS;
         } else if(rectPosX = canvas.width -100) {
@@ -120,11 +108,16 @@ function keyDownEventHandler(e) {
         } else if(rectPosX = 0) {
             rectPosX += 1;
         } 
-    } 
+    } else if(e.keyCode == 32) {
+        alert("Game Start");
+        location.reload();
+    }
 }
 function keyUpEventHandler(e) {
     if(e.key == "ArrowRight") {
+
     } else if(e.key == "ArrowLeft") {
+        
     }
 }
 
@@ -154,13 +147,12 @@ function updata() {
     // 충돌하기 
     isCollsionRectToArc();
     // 게임오버
-    gameOver();
+    // gameOver();
     // 벽돌깨기
     isCollsionArcToBricks();
     // // 게임클리어
     if(gameClear() >= 1) {
         alert("Game Clear!!!");
-        gameStatus = 2;
     }
 }
 
@@ -179,7 +171,7 @@ function isCollsionRectToArc() {
 function gameOver() {
     if(arcPosY + arcRadius == canvas.height ) {
         alert("Game Over");
-        gameStatus = 2;
+        location.reload(true);
     }
 }
 
@@ -224,4 +216,4 @@ function drawArc() {
 }
 
 setInterval(draw, 10);
-setInterval(() => {if(gameStatus == 1 && pauseX == 1) {updata()}}, 10);
+setInterval(updata, 10);
