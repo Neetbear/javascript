@@ -67,7 +67,7 @@ let arcPosY = canvas.height / 2;
 
 let X = 1; 
 let Y = 1;
-let S = 2;
+let S = 7;
 
 let ball = {
     left: 0, right: 0, top: 0, bottom: 0
@@ -80,8 +80,12 @@ let brick = {
 }
 
 // 실수로 시작부터 column열 row행 반대로 시작함
-const brickColumn = 5;
-const brickRow = 4;
+let brickColumn, brickRow;
+function gamestart() {
+    brickColumn = document.getElementById("columnNumber").value;
+    brickRow = document.getElementById("rowNumber").value;
+    console.log(brickColumn, brickRow);
+}
 const brickWidth = 50;
 const brickHeight = 25;
 let bricks = []; // 2차원 배열로 생성할 것임
@@ -148,7 +152,7 @@ document.addEventListener('keydown', keyDownEventHandler);
 document.addEventListener('keyup', keyUpEventHandler);
 
 let rectPosX = canvas.width / 2 - 100 / 2;
-let rectS = 8;
+let rectS = 15;
 
 function keyDownEventHandler(e) {
     if(e.key == "ArrowRight") {
@@ -163,6 +167,9 @@ function keyDownEventHandler(e) {
         } else if(rectPosX = 0) {
             rectPosX += 1;
         } 
+    } else if(e.keyCode == 32) {
+        alert("Game Start");
+        location.reload();
     }
 }
 function keyUpEventHandler(e) {
@@ -199,13 +206,12 @@ function updata() {
     // 충돌하기 
     isCollsionRectToArc();
     // 게임오버
-    gameOver();
+    // gameOver();
     // 벽돌깨기
     isCollsionArcToBricks();
-    // 게임클리어
+    // // 게임클리어
     if(gameClear() >= 1) {
         alert("Game Clear!!!");
-        location.reload();
     }
 }
 
@@ -224,7 +230,7 @@ function isCollsionRectToArc() {
 function gameOver() {
     if(arcPosY + arcRadius == canvas.height ) {
         alert("Game Over");
-        location.reload();
+        location.reload(true);
     }
 }
 
@@ -270,3 +276,11 @@ function drawArc() {
 
 setInterval(draw, 10);
 setInterval(updata, 10);
+
+// if(gameClear() < 1 && gameClear() >= 0) {
+//     setInterval(draw, 10);
+//     setInterval(updata, 10);
+// }else if (gameClear() >= 1 || gameClear() < 0) {
+//     alert("Game Clear!!!");
+//     location.reload(true);
+// }
