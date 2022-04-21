@@ -15,9 +15,62 @@ let ball = {
 }
 
 // 블록 배열 만들기
-let brick = {
-    left: 0, right: 0, top: 0, bottom: 0,
-    column: 0, row: 0, collisionCount: 0
+// let brick = {
+//     left: 0, right: 0, top: 0, bottom: 0,
+//     column: 0, row: 0, collisionCount: 0
+// }
+
+class Brick {
+    constructor(left, top, right, bottom, column, row, collisionCount) {
+        this.left = left;
+        this.top = top;
+        this.right = right;
+        this.bottom = bottom;
+        this.column = column;
+        this.row = row;
+        this.collisionCount = collisionCount;
+    }
+}
+class BlockBrick extends Brick {
+    constructor(left, top, right, bottom, column, row, collisionCount, dir, speed){
+        super(left, top, right, bottom, column, row, collisionCount);
+        this.dir = dir;
+        this.speed = speed;
+    };
+    movingBrick() {
+        if (this.dir == 1) {
+            this.left += this.speed;
+            this.right += this.speed;
+            if( this.left + 100 >= canvas.width ) {
+                this.dir = -1;
+            } 
+        } else {
+            this.left -= this.speed;
+            this.right -= this.speed;
+            if( this.left <= 0 ) {
+                this.dir = 1;
+            }
+        }
+    };
+    blockArc() {
+        if(arcPosX >= this.left
+            && arcPosX <= this.right
+            && arcPosY >= this.top
+            && arcPosY <= this.bottom) {
+                console.log(blockBrick);
+                Y = Y * (-1);
+        } 
+    };
+}
+// 방해 블록 만들기 
+// left, top, right, bottom, column, row, collisionCount, dir, speed
+const blockBrick = new BlockBrick(150, 200, 250, 225, 1, 1, 0, startDir[Math.round(Math.random())], 1);
+function drawBlockBrick() {
+    context.beginPath();
+    context.rect(blockBrick.left, blockBrick.top, 100, 25);
+    context.fillStyle = "black"; 
+    context.fill(); 
+    context.closePath();
 }
 
 // 실수로 시작부터 column열 row행 반대로 시작함
@@ -47,13 +100,20 @@ function setBricks() {
     for(let i = 0; i < brickRow; i++) {
         bricks[i] = [];
         for(let j = 0; j < brickColumn; j++) {
-            bricks[i][j] = {
-                left: 55 + j * (brickWidth + 10), 
-                right: 55 + j * (brickWidth + 10) + brickWidth, 
-                top: 30 + i * (brickHeight + 10), 
-                bottom: 30 + i * (brickHeight + 10) + brickHeight,
-                column: i, row: j, collisionCount: 0
-            };
+            // bricks[i][j] = {
+            //     left: 55 + j * (brickWidth + 10), 
+            //     right: 55 + j * (brickWidth + 10) + brickWidth, 
+            //     top: 30 + i * (brickHeight + 10), 
+            //     bottom: 30 + i * (brickHeight + 10) + brickHeight,
+            //     column: i, row: j, collisionCount: 0
+            // }; class로 변환 
+            bricks[i][j] = new Brick(
+                55 + j * (brickWidth + 10), 
+                30 + i * (brickHeight + 10), 
+                55 + j * (brickWidth + 10) + brickWidth, 
+                30 + i * (brickHeight + 10) + brickHeight,
+                i, j, 0
+            );
         }
     } 
 }
@@ -171,11 +231,14 @@ function updata() {
     gameOver();
     // 벽돌깨기
     isCollsionArcToBricks();
-    // // 게임클리어
+    // 게임클리어
     if(gameClear() >= 1) {
         alert("Game Clear!!!");
         gameStatus = 2;
     }
+    blockBrick.movingBrick();
+    blockBrick.blockArc();
+    // isCollsionArcToBlock();
 }
 
 function isCollsionRectToArc() {
@@ -216,6 +279,7 @@ function draw() {
     drawRect();
     drawArc();
     drawBricks();
+    drawBlockBrick();
 }
 
 function drawRect() {
