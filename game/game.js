@@ -6,18 +6,16 @@ const fieldHeight = 50;
 const fieldColumn = 10;
 const fieldRow = 10;
 
-const fieldType = ["isMonster", "isShop", "field"];
-const fieldDisign = ["forest", "desert", "river", "normal"];
-
+const fieldType = ["isMonster", "isShop", "justField"];
 class Field {
-    constructor(left, top, right, bottom, column, row, color) {
+    constructor(left, top, right, bottom, column, row, isMonster) {
         this.left = left;
         this.top = top;
         this.right = right;
         this.bottom = bottom;
         this.column = column;
         this.row = row;
-        this.color = color; // field design 용도
+        this.isMonster = isMonster;
     }
 }
 class User extends Field {
@@ -34,6 +32,12 @@ class Gate extends Field {
     };
 }
 
+class Shop extends Field {
+    constructor(left, top, right, bottom){
+        super(left, top, right, bottom);
+    };
+}
+
 let fields = [];
 function setFields() {
     for(let i = 0; i < fieldRow; i++) {
@@ -44,19 +48,20 @@ function setFields() {
                 50 + i * fieldHeight, 
                 50 + (j + 1) * fieldWidth, 
                 50 + (i + 1) * fieldHeight,
-                i, j, 0
+                i, j, Math.round(Math.random())
             );
         }
     } 
 }
 
-const fieldsColor = ["ligthgreen", "ligthblue", "bisque"]; // 숲 강 사막 
+const fieldDesign = ["forest", "river", "desert", "snow"];
+const fieldsColor = ["lightgreen", "lightblue", "bisque", "whitesmoke"]; // 숲 강 사막 
 function drawFields() {
     for(let i = 0; i < fieldRow; i++) {
         for(let j = 0; j < fieldColumn; j++) {
             context.beginPath();
             context.rect(fields[i][j].left, fields[i][j].top, fieldWidth, fieldHeight);
-            context.fillStyle = fieldsColor[(i%6)]; 
+            context.fillStyle = fieldsColor[(i%4)]; 
             context.fill(); 
             context.closePath();
         }
@@ -64,11 +69,12 @@ function drawFields() {
 }
 
 function draw() {
-
+    context.clearRect(0, 0, canvas.width, canvas.height); 
+    drawFields();
 }
 function updata () {
 
 }
-
-setInterval(draw, 10);
-setInterval(() => {if(gameStatus == 1 && pauseX == 1) {updata()}}, 10);
+draw();
+// setInterval(draw, 10);
+// setInterval(updata, 10);
