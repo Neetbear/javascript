@@ -3,8 +3,10 @@ const context = canvas.getContext("2d");
 
 const fieldWidth = 50;
 const fieldHeight = 50;
+const fieldColumn = 10;
+const fieldRow = 10;
 
-const fieldType = ["user", "gate", "monster", "shop", "field"];
+const fieldType = ["isMonster", "isShop", "field"];
 const fieldDisign = ["forest", "desert", "river", "normal"];
 
 class Field {
@@ -18,7 +20,7 @@ class Field {
         this.color = color; // field design 용도
     }
 }
-class User extends Brick {
+class User extends Field {
     constructor(left, top, right, bottom, color, HP, money){
         super(left, top, right, bottom, color);
         this.money = money;
@@ -26,18 +28,22 @@ class User extends Brick {
     };
 
 }
-
+class Gate extends Field {
+    constructor(left, top, right, bottom){
+        super(left, top, right, bottom);
+    };
+}
 
 let fields = [];
 function setFields() {
-    for(let i = 0; i < brickRow; i++) {
+    for(let i = 0; i < fieldRow; i++) {
         fields[i] = [];
-        for(let j = 0; j < brickColumn; j++) {
+        for(let j = 0; j < fieldColumn; j++) {
             fields[i][j] = new Field(
-                50 + j * brickWidth, 
-                50 + i * brickHeight, 
-                50 + (j + 1) * brickWidth, 
-                50 + (i + 1) * brickHeight,
+                50 + j * fieldWidth, 
+                50 + i * fieldHeight, 
+                50 + (j + 1) * fieldWidth, 
+                50 + (i + 1) * fieldHeight,
                 i, j, 0
             );
         }
@@ -46,21 +52,13 @@ function setFields() {
 
 const fieldsColor = ["ligthgreen", "ligthblue", "bisque"]; // 숲 강 사막 
 function drawFields() {
-    for(let i = 0; i < brickRow; i++) {
-        for(let j = 0; j < brickColumn; j++) {
-            if(bricks[i][j].collisionCount == 0) {
-                context.beginPath();
-                context.rect(bricks[i][j].left, bricks[i][j].top, brickWidth, brickHeight);
-                context.fillStyle = bricksColor[(i%6)]; 
-                context.fill(); 
-                context.closePath();
-            } else if(bricks[i][j].collisionCount == 1) {
-                context.beginPath();
-                context.rect(bricks[i][j].left, bricks[i][j].top, brickWidth, brickHeight);
-                context.fillStyle = "gray"; 
-                context.fill(); 
-                context.closePath();
-            } else {}
+    for(let i = 0; i < fieldRow; i++) {
+        for(let j = 0; j < fieldColumn; j++) {
+            context.beginPath();
+            context.rect(fields[i][j].left, fields[i][j].top, fieldWidth, fieldHeight);
+            context.fillStyle = fieldsColor[(i%6)]; 
+            context.fill(); 
+            context.closePath();
         }
     }
 }
