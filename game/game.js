@@ -43,6 +43,16 @@ class Shop extends Field {
     };
 }
 
+let shop;
+function setShop() {
+    shop = new Shop(
+        userPosX, 
+        userPosY, 
+        userPosX + fieldWidth, 
+        userPosY + fieldHeight        
+    )
+}
+
 let user = [];
 function setUser() {
     user = new User(
@@ -176,7 +186,7 @@ function draw() {
 
 function title() {
     context.font = '30px serif';
-    context.strokeText('서기영의 모험', 200, 30);
+    context.strokeText('Explorer The Field', 175, 30);
 }
 function hp() {
     context.font = '15px serif';
