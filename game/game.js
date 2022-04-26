@@ -1,6 +1,14 @@
 const canvas = document.getElementById("myCanvas");
 const context = canvas.getContext("2d");
 
+function drawBackground() {
+    context.beginPath();
+    context.rect(0 ,0, canvas.width, canvas.height -50);
+    context.fillStyle = "gray"; 
+    context.fill(); 
+    context.closePath();
+}
+
 document.addEventListener('keydown', keyDownEventHandler);
 
 const fieldWidth = 50;
@@ -12,7 +20,7 @@ let userPosY = 50;
 const arcRadius = 25
 let gameState = 0; // 0 게임가능 / 1 가위바위보(몬스터 조우) / 2 클리어
 
-const fieldType = ["isMonster", "isShop", "justField"];
+// const fieldType = ["justField", "isMonster", "isShop", "isUser", "isGoal"];
 class Field {
     constructor(left, top, right, bottom, column, row, fieldStyle, isMonster) {
         this.left = left;
@@ -21,7 +29,7 @@ class Field {
         this.bottom = bottom;
         this.column = column;
         this.row = row;
-        this.fieldStyle = fieldStyle;
+        this.fieldStyle = fieldStyle; //color
         this.isMonster = isMonster;
     }
 }
@@ -41,19 +49,18 @@ class Shop extends Field {
     constructor(left, top, right, bottom){
         super(left, top, right, bottom);
     };
+    shopping() {
+        if((userPosX == shop.left) && (userPosY == shop.top)) {
+            console.log("shop")
+            if(user.money > 100) {
+                user.money -= 100;
+                user.HP += 50;
+            }
+        }
+    }
 }
 
-let shop;
-function setShop() {
-    shop = new Shop(
-        userPosX, 
-        userPosY, 
-        userPosX + fieldWidth, 
-        userPosY + fieldHeight        
-    )
-}
-
-let user = [];
+let user;
 function setUser() {
     user = new User(
         userPosX, 
@@ -72,7 +79,7 @@ function userDraw() {
     context.closePath();
 }
 
-let gate = [];
+let gate;
 function setGate() {
     let overlap = true;
     let i, j;
@@ -86,7 +93,7 @@ function setGate() {
             overlap = false;
             gate = new Gate(
                 fieldWidth * (i + 1), 
-                fieldHeight * (j + 1) , 
+                fieldHeight * (j + 1), 
                 fieldWidth * (i + 2), 
                 fieldHeight * (j + 2)
             )
@@ -102,27 +109,64 @@ function gateDraw() {
     context.closePath();
 }
 
+
+let shop;
+function setShop() {
+    let overlap = true;
+    let i, j;
+    while(overlap) {
+        i = Math.floor(Math.random() * 9);
+        j = Math.floor(Math.random() * 9);
+        if((i == 0) && (j == 0)) { 
+            overlap = true;
+            continue;
+        } else if((fieldWidth * (i + 1) == gate.left) 
+            && (fieldHeight * (j + 1) == gate.top)) {
+                overlap = true;
+        } else { 
+            overlap = false;
+            shop = new Shop(
+                fieldWidth * (i + 1), 
+                fieldHeight * (j + 1) , 
+                fieldWidth * (i + 2), 
+                fieldHeight * (j + 2)
+            )
+        }
+    }
+}
+setShop();
+function shopDraw() {
+    context.beginPath();
+    context.arc(shop.left + fieldWidth / 2, shop.top + fieldHeight / 2, arcRadius, 0, 2 * Math.PI);
+    context.fillStyle = "gold"; 
+    context.fill(); 
+    context.closePath();
+}
+
 function keyDownEventHandler(e) {
     if(e.key == "ArrowRight" && gameState == 0) {
-        console.log("ArrowRight")
+        console.log("ArrowRight");
         if(userPosX < canvas.width -100) {
             userPosX += fieldWidth;
         }
     } else if(e.key == "ArrowLeft" && gameState == 0) {
-        console.log("ArrowLeft")
+        console.log("ArrowLeft");
         if(userPosX > fieldWidth) {
             userPosX -= fieldWidth;
         }
     } else if(e.key == "ArrowUp" && gameState == 0) {
-        console.log("ArrowUp")
+        console.log("ArrowUp");
         if(userPosY > fieldHeight) {
             userPosY -= fieldHeight;
         }
     } else if(e.key == "ArrowDown" && gameState == 0) {
-        console.log("ArrowDown")
+        console.log("ArrowDown");
         if(userPosY < canvas.height -100) {
             userPosY += fieldHeight;
         }
+    } else if(e.key == " " && gameState == 2) {
+        alert("Restart");
+        window.location.reload();
     }
 }
 
@@ -168,7 +212,9 @@ function drawFields() {
 }
 
 function gameClear() {
-    if((userPosX == gate.left) && (userPosY ==  gate.top) && (gameState == 0)) {
+    if((userPosX == gate.left) 
+    && (userPosY ==  gate.top) 
+    && (gameState == 0)) {
         gameState = 2;
         setTimeout(() => { alert("Game Clear") }, 100);
     }
@@ -176,10 +222,12 @@ function gameClear() {
 
 function draw() {
     context.clearRect(550, 0, 50, canvas.height);  
+    drawBackground()
     title();
     drawFields();
     userDraw();
-    // gateDraw();
+    gateDraw();
+    shopDraw();
     hp();
     money();
 }
@@ -294,6 +342,7 @@ function updata () {
     meetMonster();
     gameClear();
     gameOver();
+    shop.shopping();
 }
 
 setInterval(draw, 10);
