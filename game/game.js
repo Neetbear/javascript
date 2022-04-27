@@ -97,6 +97,7 @@ function setGate() {
                 fieldWidth * (i + 2), 
                 fieldHeight * (j + 2)
             )
+            console.log(gate);
         }
     }
 }
@@ -131,6 +132,7 @@ function setShop() {
                 fieldWidth * (i + 2), 
                 fieldHeight * (j + 2)
             )
+            console.log(shop);
         }
     }
 }
@@ -281,7 +283,7 @@ function meetMonster() {
 
 function fightMonster(event) {
     let mine;
-    let monsters = Math.floor(Math.random() * 3);
+    let monsters = Math.floor(Math.random() * 2);
     if(gameState == 1) {
         if(event.offsetX >= 100 
             && event.offsetX <= 150
