@@ -7,8 +7,9 @@ nunjucks.configure('views', {
     express:app
 })
 
-app.use(express.urlencoded({extended:true}))
-app.use(express.json())
+app.use(express.static(__dirname+'/public'));
+// app.use(express.urlencoded({extended:true}))
+// app.use(express.json())
 
 app.get('/', (req, res) => {
     res.render("index")
