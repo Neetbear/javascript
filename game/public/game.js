@@ -144,27 +144,32 @@ function shopDraw() {
     context.fill(); 
     context.closePath();
 }
+let lastKey;
 
 function keyDownEventHandler(e) {
     if(e.key == "ArrowRight" && gameState == 0) {
         console.log("ArrowRight");
         if(userPosX < canvas.width -100) {
             userPosX += fieldWidth;
+            lastKey = e.key;
         }
     } else if(e.key == "ArrowLeft" && gameState == 0) {
         console.log("ArrowLeft");
         if(userPosX > fieldWidth) {
             userPosX -= fieldWidth;
+            lastKey = e.key;
         }
     } else if(e.key == "ArrowUp" && gameState == 0) {
         console.log("ArrowUp");
         if(userPosY > fieldHeight) {
             userPosY -= fieldHeight;
+            lastKey = e.key;
         }
     } else if(e.key == "ArrowDown" && gameState == 0) {
         console.log("ArrowDown");
         if(userPosY < canvas.height -100) {
             userPosY += fieldHeight;
+            lastKey = e.key;
         }
     } else if(e.key == " " && gameState == 2) {
         alert("Restart");
@@ -272,10 +277,23 @@ function drawRockScissorsPaper() {
 function meetMonster() {
     // console.log((userPosX-50)/50, (userPosY-50)/50);
     if(fields[(userPosX-50)/50][(userPosY-50)/50].isMonster) {
-        console.log("meet monster");
-        alert("Monster!!!")
-        gameState = 1;
-        drawRockScissorsPaper();
+        if(confirm("몬스터 출현!!! 도망칠까???")) {
+            console.log("도망");
+            if(lastKey == "ArrowRight") {
+                userPosX -= fieldWidth;
+            } else if(lastKey == "ArrowLeft") {
+                userPosX += fieldWidth;
+            } else if(lastKey == "ArrowUp") {
+                userPosY += fieldHeight;
+            } else if(lastKey == "ArrowDown") {
+                userPosY -= fieldHeight;
+            }
+        } else {
+            console.log("meet monster");
+            alert("Monster!!!")
+            gameState = 1;
+            drawRockScissorsPaper();
+        }
     } else {
         context.clearRect(0, 550, canvas.width, 50); 
     }
